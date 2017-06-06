@@ -33,10 +33,9 @@ require_once("config.php");
 //$usuario->update("professor", "1234!@#");
 //echo $usuario;
 
-//
+//Deletando um usuário no banco
 $usuario = new Usuario();
 $usuario->loadById(9);
 $usuario->delete();
-
 echo $usuario;
  ?>
