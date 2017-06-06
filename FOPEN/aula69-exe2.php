@@ -35,5 +35,7 @@ foreach($usuarios as $row){
 
 fclose($file);
 
+echo "Arquivo CSV criando com sucesso! ";
+
 
 ?>
