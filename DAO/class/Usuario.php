@@ -48,18 +48,10 @@ public function loadById($id){
 		));
 
 	if (count($results) > 0) {
-
-	$row = $results[0];
-
-  }
-
-		$this->setIdusuario($row['idusuario']);
-		$this->setDeslogin($row['deslogin']);
-		$this->setDessenha($row['dessenha']);
-		$this->setDtcadastro(new DateTime($row['dtcadastro']));
-
-
-	}
+		$row = $results[0];
+  	}
+	$this->setData($results[0]);
+}
 
 //vantagem do metodo ser estatico é poder chamar direto sem instancia-lo.
 public static function getList(){
@@ -70,10 +62,8 @@ public static function getList(){
 }
 
 //Buscar apenas um usuário
-public static function search($Login){
-
+public static function search($login){
 	$sql = new Sql();
-
 	return $sql->select("SELECT * FROM tb_usuarios WHERE deslogin LIKE :SEARCH ORDER BY deslogin", array(
 		':SEARCH'=>"%".$login."%"
 		));
@@ -81,28 +71,52 @@ public static function search($Login){
 }
 
 public function login($login, $password){
-
 	$sql = new Sql();
+	$results = $sql->select("SELECT * FROM tb_usuarios WHERE deslogin = :LOGIN AND dessenha = :PASSWORD", array(
+		":LOGIN"=>$login,
+		":PASSWORD"=>$password
+	));
+	if (count($results) > 0) {
+		$this->setData($results[0]);
+	} else {
+		throw new Exception("Login e/ou senha inválidos.");
+	}
+}
 
-	$results = $sql->select("SELECT * FROM tb_usuarios WHERE deslogin = :LOGIN AND dessenha = :PASSWORD", array(":LOGIN"=>$login, ":PASSWORD"=>$password
+public function setData($data){
+	$this->setIdusuario($data['idusuario']);
+	$this->setDeslogin($data['deslogin']);
+	$this->setDessenha($data['dessenha']);
+	$this->setDtcadastro(new DateTime($data['dtcadastro']));
+}
 
+public function insert(){
+	$sql = new Sql();
+	//para chamar a procedure em sql é utilizado a palavra chave CALL e entre parênteses 
+	$results = $sql->select("CALL sp_usuarios_insert(:LOGIN, :PASSWORD)", array(
+		':LOGIN'=>$this->getDeslogin(),
+		':PASSWORD'=>$this->getDessenha()
+	));
+	if (count($results) > 0) {
+		$this->setData($results[0]);
+	}
+}
+
+public function update($login, $password){
+		$this->setDeslogin($login);
+		$this->setDessenha($password);
+		$sql = new Sql();
+		$sql->query("UPDATE tb_usuarios SET deslogin = :LOGIN, dessenha = :PASSWORD WHERE idusuario = :ID", array(
+			':LOGIN'=>$this->getDeslogin(),
+			':PASSWORD'=>$this->getDessenha(),
+			':ID'=>$this->getIdusuario()
 		));
+	}
 
-		if (count($results) > 0){
-
-			$row = $results[0];
-
-
-		$this->setIdusuario($row['idusuario']);
-		$this->setDeslogin($row['deslogin']);
-		$this->setDessenha($row['dessenha']);
-		$this->setDtcadastro(new DateTime($row['dtcadastro']));
-
-		} else{
-
-			throw new Exception("Login e/ou senha inválidos.");
-			
-		}
+//dentro do paremetro tem o ="" que evitar ser obrigatório informa sempre o login e senha
+public function __construct($login = "", $password = ""){
+	$this->setDeslogin($login);
+	$this->setDessenha($password);
 
 }
 
