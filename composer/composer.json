@@ -1,0 +1,15 @@
+{
+    "name": "ninja/composer",
+    "description": "Aula de php com composer",
+    "type": "project",
+    "authors":[
+    	{
+    		"name": "Alex Ramon",
+    		"email": "alexramonsg@gmail.com"
+    	}
+    ],
+    "minimum-stability": "dev",
+    "require": {
+    	"monolog/monolog":"1.0.*"
+    }
+}
