@@ -1,5 +1,13 @@
-<?php 
-require_once("vendor/autoload.php");
+<?php
+/**
+ * This example shows settings to use when sending via Google's Gmail servers.
+ */
+
+//SMTP needs accurate times, and the PHP time zone MUST be set
+//This should be done in your php.ini, but this is how to do it if you don't have access to that
+date_default_timezone_set('Etc/UTC');
+
+require '../PHPMailerAutoload.php';
 
 //Create a new PHPMailer instance
 $mail = new PHPMailer;
@@ -13,11 +21,10 @@ $mail->isSMTP();
 // 2 = client and server messages
 $mail->SMTPDebug = 2;
 
-//Ask for HTML-friendly debug output - formato do bug
+//Ask for HTML-friendly debug output
 $mail->Debugoutput = 'html';
 
-//Servidor de email
-//Poderia colocar outros emil(que tenha mesmo nome de usuario e senha)
+//Set the hostname of the mail server
 $mail->Host = 'smtp.gmail.com';
 // use
 // $mail->Host = gethostbyname('smtp.gmail.com');
@@ -33,42 +40,36 @@ $mail->SMTPSecure = 'tls';
 $mail->SMTPAuth = true;
 
 //Username to use for SMTP authentication - use full email address for gmail
-$mail->Username = "allex.ramon.ti@gmail.com";
+$mail->Username = "username@gmail.com";
 
 //Password to use for SMTP authentication
-$mail->Password = "****";
+$mail->Password = "yourpassword";
 
 //Set who the message is to be sent from
-$mail->setFrom('allex.ramon.ti@gmail.com', 'Alex Ramon');
+$mail->setFrom('from@example.com', 'First Last');
 
-//Responder para
-//$mail->addReplyTo('replyto@example.com', 'First Last');
+//Set an alternative reply-to address
+$mail->addReplyTo('replyto@example.com', 'First Last');
 
-//Para quem quer enviar - destinatário
-$mail->addAddress('robsonalvesnovaes@gmail.com', 'Teste com email');
+//Set who the message is to be sent to
+$mail->addAddress('whoto@example.com', 'John Doe');
 
-//Assunto do E-mail
-$mail->Subject = 'Testando a classe PHPMailer - Alex Ramon';
+//Set the subject line
+$mail->Subject = 'PHPMailer GMail SMTP test';
 
 //Read an HTML message body from an external file, convert referenced images to embedded,
 //convert HTML into a basic plain-text alternative body
-//Pega o conteúdo de um arquivo - no caso o html que está no mesmo diretório
 $mail->msgHTML(file_get_contents('contents.html'), dirname(__FILE__));
 
 //Replace the plain text body with one created manually
-//Caso o msgHTML não funcione essa segundo opção vai fazer sua parte e enviar uma mensagem em texto
-//Corpo alternativo caso não suporte o html
 $mail->AltBody = 'This is a plain-text message body';
 
-//Coloca uma imagem para o remetente
-//$mail->addAttachment('images/phpmailer_mini.png');
+//Attach an image file
+$mail->addAttachment('images/phpmailer_mini.png');
 
 //send the message, check for errors
 if (!$mail->send()) {
-    echo "Mensagem não enviada! Erro: " . $mail->ErrorInfo;
+    echo "Mailer Error: " . $mail->ErrorInfo;
 } else {
-    echo "Mensagem enviada!";
+    echo "Message sent!";
 }
-
-
- ?>
